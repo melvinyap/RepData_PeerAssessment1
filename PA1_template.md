@@ -1,15 +1,11 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
 1. Load the data (i.e. `read.csv()`)
-```{r loaddata}
+
+```r
 temp <- tempfile()
 download.file(
     "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
@@ -20,47 +16,70 @@ dfActivity <- read.csv(file, header=T)
 ```
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis
-```{r processdata}
+
+```r
 dfActivity$steps <- as.numeric(dfActivity$steps)
 dfActivity$date <- as.Date(dfActivity$date, format="%Y-%m-%d")
 dfActivity$interval <- as.numeric(dfActivity$interval)
 head(dfActivity, n=10L)
 ```
 
+```
+##    steps       date interval
+## 1     NA 2012-10-01        0
+## 2     NA 2012-10-01        5
+## 3     NA 2012-10-01       10
+## 4     NA 2012-10-01       15
+## 5     NA 2012-10-01       20
+## 6     NA 2012-10-01       25
+## 7     NA 2012-10-01       30
+## 8     NA 2012-10-01       35
+## 9     NA 2012-10-01       40
+## 10    NA 2012-10-01       45
+```
+
 ## What is mean total number of steps taken per day?
 
 1. Make a histogram of the total number of steps taken each day
-```{r histogram}
+
+```r
 dfTotalSteps <- aggregate(steps~date, data=dfActivity, FUN=sum)
 hist(dfTotalSteps$steps, main=paste("Histogram of Total No. of Steps Each Day"),
      xlab = "Total No. of Steps Each Day", ylab = "Frequency")
 ```
 
+![](Peer_Assessment_1_files/figure-html/histogram-1.png) 
+
 2. Calculate and report the **mean** and **median** total number of steps taken per day
-```{r mean&median}
+
+```r
 stepsMean <- mean(dfTotalSteps$steps)
 stepsMedian <- median(dfTotalSteps$steps)
 ```
 
-Mean: **`r as.character(round(stepsMean,2))`**
+Mean: **10766.19**
 
-Median: **`r as.character(stepsMedian)`**
+Median: **10765**
 
 ## What is the average daily activity pattern?
 
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r timeseries}
+
+```r
 dfAvgSteps <- aggregate(steps~interval, data=dfActivity, FUN=mean)
 plot(steps~interval, main="Time Series Plot of Average No. of Steps Taken",
      type="l", data=dfAvgSteps, xlab="Interval (5-minute)", ylab="Average No. of Steps")
 ```
 
+![](Peer_Assessment_1_files/figure-html/timeseries-1.png) 
+
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r intervalwithmax}
+
+```r
 intervalWithMax <- dfAvgSteps[which.max(dfAvgSteps$steps), "interval"]
 ```
 
-The 5-minute interval at **`r intervalWithMax`** position contains the maximum
+The 5-minute interval at **835** position contains the maximum
 number of steps.
 
 ## Imputing missing values
@@ -68,8 +87,13 @@ number of steps.
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
 
 The following is the calculation of the total number of missing values:
-```{r missingvalues}
+
+```r
 nrow(dfActivity[which(is.na(dfActivity)),])
+```
+
+```
+## [1] 2304
 ```
 
 
@@ -81,7 +105,8 @@ in the dataset.
 
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r fillmissing}
+
+```r
 dfActivityFilled <- dfActivity
 dfActivityFilled[which(is.na(dfActivity)),]$steps <- stepsMean/288
 ```
@@ -89,25 +114,29 @@ dfActivityFilled[which(is.na(dfActivity)),]$steps <- stepsMean/288
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r newhistogram}
+
+```r
 dfTotalStepsNew <- aggregate(steps~date, data=dfActivityFilled, FUN=sum)
 hist(dfTotalStepsNew$steps, 
      main=paste("Histogram of Total No. of Steps Each Day (with NA filled)"),
      xlab = "Total No. of Steps Each Day", ylab = "Frequency")
 ```
 
-```{r newmean&median}
+![](Peer_Assessment_1_files/figure-html/newhistogram-1.png) 
+
+
+```r
 stepsMeanNew <- mean(dfTotalStepsNew$steps)
 stepsMedianNew <- median(dfTotalStepsNew$steps)
 ```
 
-New Mean: **`r as.character(round(stepsMeanNew,2))`**
+New Mean: **10766.19**
 
-New Median: **`r as.character(round(stepsMedianNew,2))`**
+New Median: **10766.19**
 
 With this strategy of filling missing values, the mean remains unchanged but
-the median is changed from **`r as.character(round(stepsMedian,2))`** to 
-**`r as.character(round(stepsMedianNew,2))`**.
+the median is changed from **10765** to 
+**10766.19**.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -120,13 +149,26 @@ weekdays/weekends. Details of the package can be found at [http://cran.r-project
 The following R code creates a factor variable `daytype` that indicates two
 levels - *weekday* and *weekend*.
 
-```{r usetimeDate, warning=FALSE}
+
+```r
 library(timeDate)
 ```
-```{r createfactor}
+
+```r
 dfActivityFilled$daytype <- ifelse(isWeekday(dfActivityFilled$date),
                                    "weekday", "weekend")
 head(unique(dfActivityFilled[,c("date","daytype")]), 7)
+```
+
+```
+##            date daytype
+## 1    2012-10-01 weekday
+## 289  2012-10-02 weekday
+## 577  2012-10-03 weekday
+## 865  2012-10-04 weekday
+## 1153 2012-10-05 weekday
+## 1441 2012-10-06 weekend
+## 1729 2012-10-07 weekend
 ```
 
 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
@@ -134,13 +176,17 @@ head(unique(dfActivityFilled[,c("date","daytype")]), 7)
 The following R code uses the `xyplot` in `lattice` package to generate the
 time series plots for weekday days and weekend days.
 
-```{r uselattice, warning=FALSE}
+
+```r
 library(lattice)
 ```
-```{r xyplot}
+
+```r
 dfAvgStepsFilled <- aggregate(steps~interval+daytype, data=dfActivityFilled, 
                               FUN=mean)
 xyplot(steps~interval|factor(daytype), 
        main="Time Series Plots of Average No. of Steps Taken",
        type="l", data=dfAvgStepsFilled, aspect=1/2)
 ```
+
+![](Peer_Assessment_1_files/figure-html/xyplot-1.png) 
