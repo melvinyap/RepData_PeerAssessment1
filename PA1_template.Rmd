@@ -37,110 +37,107 @@ output:
     ```
     
 2. Calculate and report the **mean** and **median** total number of steps taken per day
-```{r mean&median}
-stepsMean <- mean(dfTotalSteps$steps)
-stepsMedian <- median(dfTotalSteps$steps)
-```
-
-Mean: **`r as.character(round(stepsMean,2))`**
-
-Median: **`r as.character(stepsMedian)`**
-
+    ```{r mean&median}
+    stepsMean <- mean(dfTotalSteps$steps)
+    stepsMedian <- median(dfTotalSteps$steps)
+    ```
+    
+    Mean: **`r as.character(round(stepsMean,2))`**
+    
+    Median: **`r as.character(stepsMedian)`**
+    
 ## What is the average daily activity pattern?
 
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r timeseries}
-dfAvgSteps <- aggregate(steps~interval, data=dfActivity, FUN=mean)
-plot(steps~interval, main="Time Series Plot of Average No. of Steps Taken",
-     type="l", data=dfAvgSteps, xlab="Interval (5-minute)", ylab="Average No. of Steps")
-```
-
+    ```{r timeseries}
+    dfAvgSteps <- aggregate(steps~interval, data=dfActivity, FUN=mean)
+    plot(steps~interval, main="Time Series Plot of Average No. of Steps Taken",
+         type="l", data=dfAvgSteps, xlab="Interval (5-minute)", ylab="Average No. of Steps")
+    ```
+    
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r intervalwithmax}
-intervalWithMax <- dfAvgSteps[which.max(dfAvgSteps$steps), "interval"]
-```
-
-The 5-minute interval at **`r intervalWithMax`** position contains the maximum
-number of steps.
-
+    ```{r intervalwithmax}
+    intervalWithMax <- dfAvgSteps[which.max(dfAvgSteps$steps), "interval"]
+    ```
+    
+    The 5-minute interval at **`r intervalWithMax`** position contains the maximum
+    number of steps.
+    
 ## Imputing missing values
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
-
-The following is the calculation of the total number of missing values:
-```{r missingvalues}
-nrow(dfActivity[which(is.na(dfActivity)),])
-```
-
-
+    
+    The following is the calculation of the total number of missing values:
+    ```{r missingvalues}
+    nrow(dfActivity[which(is.na(dfActivity)),])
+    ```
+    
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
-
-Mean for 5-minute interval for each day (i.e. `stepsMean/288` where 288 is the
-number of 5-minute intervals in a day) is used to fill all the missing values 
-in the dataset.
-
-
+    
+    Mean for 5-minute interval for each day (i.e. `stepsMean/288` where 288 is the
+    number of 5-minute intervals in a day) is used to fill all the missing values 
+    in the dataset.
+    
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r fillmissing}
-dfActivityFilled <- dfActivity
-dfActivityFilled[which(is.na(dfActivity)),]$steps <- stepsMean/288
-```
-
-
+    ```{r fillmissing}
+    dfActivityFilled <- dfActivity
+    dfActivityFilled[which(is.na(dfActivity)),]$steps <- stepsMean/288
+    ```
+    
 4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
-
-```{r newhistogram}
-dfTotalStepsNew <- aggregate(steps~date, data=dfActivityFilled, FUN=sum)
-hist(dfTotalStepsNew$steps, 
-     main=paste("Histogram of Total No. of Steps Each Day (with NA filled)"),
-     xlab = "Total No. of Steps Each Day", ylab = "Frequency")
-```
-
-```{r newmean&median}
-stepsMeanNew <- mean(dfTotalStepsNew$steps)
-stepsMedianNew <- median(dfTotalStepsNew$steps)
-```
-
-New Mean: **`r as.character(round(stepsMeanNew,2))`**
-
-New Median: **`r as.character(round(stepsMedianNew,2))`**
-
-With this strategy of filling missing values, the mean remains unchanged but
-the median is changed from **`r as.character(round(stepsMedian,2))`** to 
-**`r as.character(round(stepsMedianNew,2))`**.
-
-
+    
+    ```{r newhistogram}
+    dfTotalStepsNew <- aggregate(steps~date, data=dfActivityFilled, FUN=sum)
+    hist(dfTotalStepsNew$steps, 
+         main=paste("Histogram of Total No. of Steps Each Day (with NA filled)"),
+         xlab = "Total No. of Steps Each Day", ylab = "Frequency")
+    ```
+    
+    ```{r newmean&median}
+    stepsMeanNew <- mean(dfTotalStepsNew$steps)
+    stepsMedianNew <- median(dfTotalStepsNew$steps)
+    ```
+    
+    New Mean: **`r as.character(round(stepsMeanNew,2))`**
+    
+    New Median: **`r as.character(round(stepsMedianNew,2))`**
+    
+    With this strategy of filling missing values, the mean remains unchanged but
+    the median is changed from **`r as.character(round(stepsMedian,2))`** to 
+    **`r as.character(round(stepsMedianNew,2))`**.
+    
+    
 ## Are there differences in activity patterns between weekdays and weekends?
 
 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
-
-The R package `timeDate` is installed and loaded for convenience of identifying
-weekdays/weekends. Details of the package can be found at [http://cran.r-project.org/web/packages/timeDate/index.html](http://cran.r-project.org/web/packages/timeDate/index.html).
-
-The following R code creates a factor variable `daytype` that indicates two
-levels - *weekday* and *weekend*.
-
-```{r usetimeDate, warning=FALSE}
-library(timeDate)
-```
-```{r createfactor}
-dfActivityFilled$daytype <- ifelse(isWeekday(dfActivityFilled$date),
-                                   "weekday", "weekend")
-head(unique(dfActivityFilled[,c("date","daytype")]), 7)
-```
-
+    
+    The R package `timeDate` is installed and loaded for convenience of identifying
+    weekdays/weekends. Details of the package can be found at [http://cran.r-project.org/web/packages/timeDate/index.html](http://cran.r-project.org/web/packages/timeDate/index.html).
+    
+    The following R code creates a factor variable `daytype` that indicates two
+    levels - *weekday* and *weekend*.
+    
+    ```{r usetimeDate, warning=FALSE}
+    library(timeDate)
+    ```
+    ```{r createfactor}
+    dfActivityFilled$daytype <- ifelse(isWeekday(dfActivityFilled$date),
+                                       "weekday", "weekend")
+    head(unique(dfActivityFilled[,c("date","daytype")]), 7)
+    ```
+    
 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
-
-The following R code uses the `xyplot` in `lattice` package to generate the
-time series plots for weekday days and weekend days.
-
-```{r uselattice, warning=FALSE}
-library(lattice)
-```
-```{r xyplot}
-dfAvgStepsFilled <- aggregate(steps~interval+daytype, data=dfActivityFilled, 
-                              FUN=mean)
-xyplot(steps~interval|factor(daytype), 
-       main="Time Series Plots of Average No. of Steps Taken",
-       type="l", data=dfAvgStepsFilled, aspect=1/2)
-```
+    
+    The following R code uses the `xyplot` in `lattice` package to generate the
+    time series plots for weekday days and weekend days.
+    
+    ```{r uselattice, warning=FALSE}
+    library(lattice)
+    ```
+    ```{r xyplot}
+    dfAvgStepsFilled <- aggregate(steps~interval+daytype, data=dfActivityFilled, 
+                                  FUN=mean)
+    xyplot(steps~interval|factor(daytype), 
+           main="Time Series Plots of Average No. of Steps Taken",
+           type="l", data=dfAvgStepsFilled, aspect=1/2)
+    ```
