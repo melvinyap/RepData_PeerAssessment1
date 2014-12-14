@@ -4,52 +4,52 @@
 ## Loading and preprocessing the data
 
 1. Load the data (i.e. `read.csv()`)
-
-```r
-temp <- tempfile()
-download.file(
-    "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
-    temp, method="curl")
-file <- unzip(temp)
-unlink(temp)
-dfActivity <- read.csv(file, header=T)
-```
+    
+    ```r
+    temp <- tempfile()
+    download.file(
+        "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
+        temp, method="curl")
+    file <- unzip(temp)
+    unlink(temp)
+    dfActivity <- read.csv(file, header=T)
+    ```
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis
-
-```r
-dfActivity$steps <- as.numeric(dfActivity$steps)
-dfActivity$date <- as.Date(dfActivity$date, format="%Y-%m-%d")
-dfActivity$interval <- as.numeric(dfActivity$interval)
-head(dfActivity, n=10L)
-```
-
-```
-##    steps       date interval
-## 1     NA 2012-10-01        0
-## 2     NA 2012-10-01        5
-## 3     NA 2012-10-01       10
-## 4     NA 2012-10-01       15
-## 5     NA 2012-10-01       20
-## 6     NA 2012-10-01       25
-## 7     NA 2012-10-01       30
-## 8     NA 2012-10-01       35
-## 9     NA 2012-10-01       40
-## 10    NA 2012-10-01       45
-```
+    
+    ```r
+    dfActivity$steps <- as.numeric(dfActivity$steps)
+    dfActivity$date <- as.Date(dfActivity$date, format="%Y-%m-%d")
+    dfActivity$interval <- as.numeric(dfActivity$interval)
+    head(dfActivity, n=10L)
+    ```
+    
+    ```
+    ##    steps       date interval
+    ## 1     NA 2012-10-01        0
+    ## 2     NA 2012-10-01        5
+    ## 3     NA 2012-10-01       10
+    ## 4     NA 2012-10-01       15
+    ## 5     NA 2012-10-01       20
+    ## 6     NA 2012-10-01       25
+    ## 7     NA 2012-10-01       30
+    ## 8     NA 2012-10-01       35
+    ## 9     NA 2012-10-01       40
+    ## 10    NA 2012-10-01       45
+    ```
 
 ## What is mean total number of steps taken per day?
 
 1. Make a histogram of the total number of steps taken each day
-
-```r
-dfTotalSteps <- aggregate(steps~date, data=dfActivity, FUN=sum)
-hist(dfTotalSteps$steps, main=paste("Histogram of Total No. of Steps Each Day"),
-     xlab = "Total No. of Steps Each Day", ylab = "Frequency")
-```
-
-![](Peer_Assessment_1_files/figure-html/histogram-1.png) 
-
+    
+    ```r
+    dfTotalSteps <- aggregate(steps~date, data=dfActivity, FUN=sum)
+    hist(dfTotalSteps$steps, main=paste("Histogram of Total No. of Steps Each Day"),
+         xlab = "Total No. of Steps Each Day", ylab = "Frequency")
+    ```
+    
+    ![](Peer_Assessment_1_files/figure-html/histogram-1.png) 
+    
 2. Calculate and report the **mean** and **median** total number of steps taken per day
 
 ```r

@@ -9,33 +9,33 @@ output:
 ## Loading and preprocessing the data
 
 1. Load the data (i.e. `read.csv()`)
-```{r loaddata}
-temp <- tempfile()
-download.file(
-    "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
-    temp, method="curl")
-file <- unzip(temp)
-unlink(temp)
-dfActivity <- read.csv(file, header=T)
-```
+    ```{r loaddata}
+    temp <- tempfile()
+    download.file(
+        "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
+        temp, method="curl")
+    file <- unzip(temp)
+    unlink(temp)
+    dfActivity <- read.csv(file, header=T)
+    ```
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis
-```{r processdata}
-dfActivity$steps <- as.numeric(dfActivity$steps)
-dfActivity$date <- as.Date(dfActivity$date, format="%Y-%m-%d")
-dfActivity$interval <- as.numeric(dfActivity$interval)
-head(dfActivity, n=10L)
-```
+    ```{r processdata}
+    dfActivity$steps <- as.numeric(dfActivity$steps)
+    dfActivity$date <- as.Date(dfActivity$date, format="%Y-%m-%d")
+    dfActivity$interval <- as.numeric(dfActivity$interval)
+    head(dfActivity, n=10L)
+    ```
 
 ## What is mean total number of steps taken per day?
 
 1. Make a histogram of the total number of steps taken each day
-```{r histogram}
-dfTotalSteps <- aggregate(steps~date, data=dfActivity, FUN=sum)
-hist(dfTotalSteps$steps, main=paste("Histogram of Total No. of Steps Each Day"),
-     xlab = "Total No. of Steps Each Day", ylab = "Frequency")
-```
-
+    ```{r histogram}
+    dfTotalSteps <- aggregate(steps~date, data=dfActivity, FUN=sum)
+    hist(dfTotalSteps$steps, main=paste("Histogram of Total No. of Steps Each Day"),
+         xlab = "Total No. of Steps Each Day", ylab = "Frequency")
+    ```
+    
 2. Calculate and report the **mean** and **median** total number of steps taken per day
 ```{r mean&median}
 stepsMean <- mean(dfTotalSteps$steps)
